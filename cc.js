@@ -11,6 +11,7 @@ var coffees = {
 };
 
 var instant = {
+  name: "Instant",
   time: 5,
   cost: 1,
   pretentiousness: 0,
@@ -21,6 +22,7 @@ var instant = {
 };
 
 var premiumInstant = {
+  name: "Premium Instant",
   time: 5,
   cost: 2,
   pretentiousness: 0,
@@ -83,7 +85,8 @@ var supply = null;
   }checkForSupplies()
 };
 
-function premium(){currentlyDrinking = premiumInstant;}
+function premium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function instant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 window.setInterval(function(){
 checkForDrink()
 }, looprate);
