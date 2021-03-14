@@ -44,14 +44,38 @@ function DrinkCoffee(number){
 };
 
 function upgrades(){
-if(made > 19){upgradefromInstant = true;document.getElementById("upgrades").innerHTML = 'Upgrade available';}
+//if(made > 19&& made < 50){upgradefromInstant = true;document.getElementById("upgrades").innerHTML = 'Upgrade available';}
 }
+
+function premcoffee(){makerate = 2;}
+function addfriend(){drinkrate = 2;}
+
+var forms = document.forms[0];
+var i = 0;
+function checkboxes(){
+  for (i = 0; i < forms.length; i++){
+    if (forms[i].checked){console.log(forms[i])}
+  }
+}
+document.querySelector('#premcoffee')
+        .addEventListener('change', function()
+{
+    if (this.checked)
+    {
+        premcoffee();
+    }
+    if (this.checked == false){
+      makerate = 1;
+    }
+}, false);
+
 
 window.setInterval(function(){
 save()
 upgrades()
-if(automake == true&&made > 9){MakeCoffee(drinkrate);}
-if(autodrink == true){DrinkCoffee(makerate);}
+checkboxes()
+if(automake == true&&made > 9){MakeCoffee(makerate);}
+if(autodrink == true&& drunk > 9){DrinkCoffee(drinkrate);}
 //Clear Errors
 if(made>drunk){document.getElementById("errors").innerHTML = null;}
 }, looprate);
