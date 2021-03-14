@@ -45,6 +45,7 @@ function MakeCoffee(number){
   checkForSupplies()
  made = made + number;
  money = money - currentlyDrinking.cost
+ //this consumes all supplies equally. BAD!
  for(supply in coffeeSupplies){
    coffeeSupplies[supply] = coffeeSupplies[supply] - 1;
  }
@@ -85,8 +86,8 @@ var supply = null;
   }checkForSupplies()
 };
 
-function premium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
-function instant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 window.setInterval(function(){
 checkForDrink()
 }, looprate);
