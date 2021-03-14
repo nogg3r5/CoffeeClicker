@@ -3,6 +3,9 @@ var drunk = 0;
 var automake = false;
 var autodrink = false;
 var upgradefromInstant = null;
+var makerate = 1;
+var drinkrate =1;
+var looprate =1000;
 
 var savegame = JSON.parse(localStorage.getItem("save"));
 if (typeof savegame.made !== "undefined") made = savegame.made;
@@ -36,11 +39,15 @@ function DrinkCoffee(number){
  else{document.getElementById("errors").innerHTML = 'You need to make a drink!';}
 };
 
-window.setInterval(function(){
-if(automake == true){MakeCoffee(1);}
-if(autodrink == true){DrinkCoffee(1);}
+function upgrades(){
 if(made > 19){upgradefromInstant = true;document.getElementById("upgrades").innerHTML = 'Upgrade available';}
+}
+
+window.setInterval(function(){
+save()
+upgrades()
+if(automake == true){MakeCoffee(drinkrate);}
+if(autodrink == true){DrinkCoffee(makerate);}
 //Clear Errors
 if(made>drunk){document.getElementById("errors").innerHTML = null;}
-save()
-}, 1000);
+}, looprate);
