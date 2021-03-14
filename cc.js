@@ -13,6 +13,10 @@ function delsave(){
  localStorage.removeItem("save")
  made = 0;
  drunk =0;
+ document.getElementById("drunk").innerHTML = null;
+ document.getElementById("made").innerHTML = null;
+ document.getElementById("upgrades").innerHTML = null;
+ document.getElementById("errors").innerHTML = null;
  save()
 }
 
@@ -46,7 +50,7 @@ if(made > 19){upgradefromInstant = true;document.getElementById("upgrades").inne
 window.setInterval(function(){
 save()
 upgrades()
-if(automake == true){MakeCoffee(drinkrate);}
+if(automake == true&&made > 9){MakeCoffee(drinkrate);}
 if(autodrink == true){DrinkCoffee(makerate);}
 //Clear Errors
 if(made>drunk){document.getElementById("errors").innerHTML = null;}
