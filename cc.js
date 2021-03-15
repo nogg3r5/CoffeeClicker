@@ -17,8 +17,8 @@ var instant = {
   pretentiousness: 0,
   taste: 1,
   consumes: instantConsumes={
-  instantCoffee: 2,
-  water: 3}
+  instantCoffee: 1,
+  water: 1}
 };
 
 var premiumInstant = {
@@ -39,42 +39,38 @@ var supplyCosts = {
 }
 
 var currentlyDrinking = instant;
-
+checkForSupplies()
+checkForDrink()
 function MakeCoffee(number){
-  console.log("Making Coffee")
-  checkForSupplies()
  made = made + number;
  money = money - currentlyDrinking.cost
  for(redSupply in currentlyDrinking.consumes){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
- console.log("Made Coffee")
- checkForSupplies()
 };
 
 function checkForDrink(){
   if(made > 0){drink= true; document.getElementById("btnDrink").disabled = false; document.getElementById("btnMade").disabled = true;}else{drink=false; document.getElementById("btnDrink").disabled = true; document.getElementById("btnMade").disabled = false;}
 };
 
-function checkForSupplies(){
-   console.log("Checking Supplies:")
+function checkForSupplies(y){
+  var checksupply = null;
  for(checksupply in coffeeSupplies){
-  console.log(checksupply +" "+ coffeeSupplies[checksupply])
+//calling function with 1 outputs to console
+  if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
  }
  for(cDSupply in currentlyDrinking.consumes){
- if(!(cDSupply in coffeeSupplies)){haveSupplies = false;}else{haveSupplies = true;}
+   cDSupplyValue = coffeeSupplies[checksupply];
+ if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){haveSupplies = false;document.getElementById("btnMade").disabled = true;}else{haveSupplies = true;document.getElementById("btnMade").disabled = false;}
 }
-//FOr some reason this doesnt quite work.
-console.log("Do we have the supplies: "+haveSupplies)
+return haveSupplies
 }
 
-function DrinkCoffee(number){
+function DrinkCoffee(){
  made = made - 1;
 };
 
-function buySupplies(number){
-  console.log("Currently Drinking Consumes");
-  console.log(currentlyDrinking.consumes)
+function buySupplies(){
 //Add supplies, if the supply doesnt exist already
 var supply = null;
   for(supply in currentlyDrinking.consumes){
@@ -82,11 +78,12 @@ var supply = null;
     else{
       coffeeSupplies[supply] = coffeeSupplies[supply] + 1;
     }
-  }checkForSupplies()
+  }checkForSupplies(1)
 };
 
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 window.setInterval(function(){
 checkForDrink()
+checkForSupplies()
 }, looprate);
