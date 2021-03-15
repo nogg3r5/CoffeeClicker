@@ -45,8 +45,7 @@ function MakeCoffee(number){
   checkForSupplies()
  made = made + number;
  money = money - currentlyDrinking.cost
- //this consumes all supplies equally. BAD!
- for(supply in coffeeSupplies){
+ for(supply in currentlyDrinking.consumes){
    coffeeSupplies[supply] = coffeeSupplies[supply] - 1;
  }
  console.log("Made Coffee")
