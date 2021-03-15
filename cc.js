@@ -17,8 +17,8 @@ var instant = {
   pretentiousness: 0,
   taste: 1,
   consumes: instantConsumes={
-  instantCoffee: 1,
-  water: 1}
+  instantCoffee: 2,
+  water: 3}
 };
 
 var premiumInstant = {
@@ -45,8 +45,8 @@ function MakeCoffee(number){
   checkForSupplies()
  made = made + number;
  money = money - currentlyDrinking.cost
- for(supply in currentlyDrinking.consumes){
-   coffeeSupplies[supply] = coffeeSupplies[supply] - 1;
+ for(redSupply in currentlyDrinking.consumes){
+   coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
  console.log("Made Coffee")
  checkForSupplies()
