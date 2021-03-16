@@ -99,6 +99,7 @@ return haveSupplies
 function DrinkCoffee(){
  made = made - 1;
  drunkTotal = drunkTotal + 1;
+ updateCounter("Drunk",drunkTotal)
 };
 
 function buySupplies(){
@@ -111,6 +112,17 @@ var supply = null;
     }
   }checkForSupplies(1)
 };
+
+function updateCounter(name,counted){
+  const container = document.getElementById('counters');
+  const word = document.createElement('p');
+  container.appendChild(word);
+  var pID = document.createAttribute("id");
+  pID.value = name;
+  word.setAttributeNode(pID);
+  var t = document.createTextNode(name+": "+counted);     // Create a text node
+  word.appendChild(t);
+}
 
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
