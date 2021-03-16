@@ -4,6 +4,8 @@ var money = 10;
 var coffeeSupplies = [];
 var drink = false;
 var looprate =125;
+var madeTotal = 0;
+var drunkTotal = 0;
 
 var coffees = {
   instant: instant,
@@ -38,12 +40,40 @@ var supplyCosts = {
  premiumInstant: 2
 }
 
+var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"},
+{'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
+{'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"},
+{'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
+{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"}]
+
+function addButtonToContainer(b) {
+  console.log(b['name'])
+    const container = document.getElementById('CoffeeClicker');
+    const button = document.createElement('button');
+    button.innerText = b['name'];
+    var btnID = document.createAttribute("id");
+    btnID.value = b['id'];
+    var btnType = document.createAttribute("type");
+    btnType.value = "button";
+    var btnonclick = document.createAttribute("onclick");
+    btnonclick.value = b['onClick'];
+    button.setAttributeNode(btnID);
+    button.setAttributeNode(btnType);
+    button.setAttributeNode(btnonclick);
+    container.appendChild(button);
+}
+
+for(b in buttons){
+  addButtonToContainer(buttons[b])
+}
+
 var currentlyDrinking = instant;
 checkForSupplies()
 checkForDrink()
 function MakeCoffee(number){
  made = made + number;
- money = money - currentlyDrinking.cost
+ money = money - currentlyDrinking.cost;
+ madeTotal = madeTotal +1;
  for(redSupply in currentlyDrinking.consumes){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
@@ -68,6 +98,7 @@ return haveSupplies
 
 function DrinkCoffee(){
  made = made - 1;
+ drunkTotal = drunkTotal + 1;
 };
 
 function buySupplies(){
