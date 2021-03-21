@@ -14,7 +14,8 @@ var moneyTotal = 0;
 var messages = [];
 var job = false;
 var cafeUnlocked = false;
-var jobTickCount
+var jobTickCount = undefined;
+var multiplier = 0;
 
 
 var aeropressBrewer = undefined;
@@ -203,7 +204,7 @@ function DrinkCoffee(){
  updateCounter("Drunk",drunkTotal)
 };
 
-function buySupplies(){
+function buySupplies(multiplier){
 if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
     btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
@@ -261,6 +262,7 @@ function earnMoney(){
   updateCounter("Money",money,"£")
   tickCount = perTicks;
   moneyTotal = moneyTotal + income;
+  if(job == true){updateCounter("LifetimeEarnings",moneyTotal,"£")}
 }else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
@@ -269,7 +271,6 @@ function chginstant(){currentlyDrinking = instant;console.log("Currently Drinkin
 function chgaero(){currentlyDrinking = aeropress;console.log("Currently Drinking: " +currentlyDrinking.name);}
 
 function unlocks(){
-
   if(moneyTotal>100000){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
   if(moneyTotal>100){premiumInstantUnlocked=true;if(checkForBtn("btnPrem") == false){updateMessages("You can buy Premium Instant Coffee!");btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};addButtonToContainer(btnInst);addButtonToContainer(btnPrem);}}
   if(moneyTotal>200){aeropressUnocked=true;if(checkForBtn("btnAero") == false){updateMessages("You can buy Aeropress!");btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};addButtonToContainer(btnAero)}}
@@ -281,4 +282,5 @@ checkForDrink()
 checkForSupplies()
 jobTimer()
 showSupplies()
+unlocks()
 }, looprate);
