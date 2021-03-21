@@ -10,6 +10,8 @@ var drunkTotal = 0;
 var income = 0;
 var tickCount = 10;
 var perTicks = 10;
+var moneyTotal = 0;
+var messages = [];
 
 var coffees = {
   instant: instant,
@@ -50,6 +52,40 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"}
 {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
 {'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"}
 ]
+
+function updateMessages(newMsg){
+  sel =  document.querySelector("#Messages")
+
+  if(sel.childElementCount > 0){sel1 = sel.childNodes[0]}
+  if(messages.length < 5){
+    messages.push(newMsg)
+    document.getElementById('Messages').appendChild(makeUL(messages));
+    //document.getElementById('Messages').appendChild(makeUL(messages));
+ }else{
+  messages.shift();
+  messages.push(newMsg)
+  document.getElementById('Messages').replaceChild(makeUL(messages),sel1);
+  //document.getElementById('Messages').appendChild(makeUL(messages));
+ }
+}
+
+function makeUL(array) {
+if(array.length < 5){type = "append"}else{type = "replace"}
+  var list = document.createElement('ul');
+  for (var i = 0; i < array.length; i++) {
+      // Create the list item:
+      var item = document.createElement('li');
+      // Set its contents:
+      item.appendChild(document.createTextNode(array[i]));
+      // Add it to the list:
+      list.appendChild(item);
+  }
+  // Finally, return the constructed list:
+  return list;
+}
+// Add the contents of options[0] to #foo:
+
+
 function checkForBtn(checkForBtnName){
   var check = undefined;
   qname = !!document.querySelector("#"+checkForBtnName)
@@ -114,7 +150,7 @@ if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
     btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
     addButtonToContainer(btnjob)
-  }else{console.log("Peasant")}
+  }else{updateMessages("Get a job!");}
   }else{
   var supply = undefined;
   for(supply in currentlyDrinking.consumes){
@@ -146,12 +182,13 @@ const container = document.getElementById('counters');
 
 }
 
-function getJob(){job = true;income = income+ 1;perTicks = perTicks-1;}
+function getJob(){job = true;income = income+ 1;}
 function earnMoney(){
   if(tickCount == 0){
   money = money + income;
   updateCounter("Money",money,"£")
   tickCount = perTicks;
+  moneyTotal = moneyTotal + income;
 }else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
