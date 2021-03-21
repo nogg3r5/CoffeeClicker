@@ -13,10 +13,15 @@ var perTicks = 10;
 var moneyTotal = 0;
 var messages = [];
 var job = false;
+var cafeUnlocked = false;
+
+
+var aeropressBrewer = undefined;
 
 var coffees = {
   instant: instant,
-  premiumInstant: premiumInstant
+  premiumInstant: premiumInstant,
+  aeropress: aeropress
 };
 
 var instant = {
@@ -25,6 +30,7 @@ var instant = {
   cost: 1,
   pretentiousness: 0,
   taste: 1,
+  requireskit: false,
   consumes: instantConsumes={
   instantCoffee: 1,
   water: 1}
@@ -34,24 +40,49 @@ var premiumInstant = {
   name: "Premium Instant",
   time: 5,
   cost: 2,
-  pretentiousness: 0,
+  pretentiousness: 1,
   taste: 2,
+  requireskit: false,
   consumes: premiumInstantConsumes={
   premiumInstantCoffee: 1,
+  water: 1}
+};
+
+var aeropress = {
+  name: "Aeropress",
+  time: 10,
+  cost: 1,
+  pretentiousness: 2,
+  taste: 5,
+  requireskit: true,
+  requires: req={
+    kit1: aeropressBrewer,
+  },
+  consumes: aeropessConsumes={
+  groundCoffee: 1,
+  filters: 1,
   water: 1}
 };
 
 var supplyCosts = {
  water: 1,
  instant: 1,
- premiumInstant: 2
+ premiumInstant: 2,
+ filters: 1
 }
 
+var kitCosts = {
+  aeropress: 30,
+  mokapot: 25
+}
+
+var currentlyDrinking = instant;
 var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"},
 {'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
 {'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"},
 {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
-{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"}
+{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"},
+{'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"}
 ]
 
 function updateMessages(newMsg){
@@ -84,7 +115,6 @@ function updateMessages(newMsg){
 }
  }
 
-
 function checkForBtn(checkForBtnName){
   var check = undefined;
   qname = !!document.querySelector("#"+checkForBtnName)
@@ -111,9 +141,6 @@ for(b in buttons){
   addButtonToContainer(buttons[b])
 }
 
-var currentlyDrinking = instant;
-checkForSupplies()
-checkForDrink()
 function MakeCoffee(number){
  made = made + number;
  madeTotal = madeTotal +1;
@@ -178,10 +205,14 @@ const container = document.getElementById('counters');
   var t = document.createTextNode(name+": "+units+counted);     // Create a text node
   word.appendChild(t);
 }
-
 }
 
-function getJob(){job = true;income = income+ 1;}
+function getJob(){
+  job = true;
+  income = income+ 1;
+  const container = document.getElementById('btnJob');
+  container.innerText = "Get a better job";
+}
 function earnMoney(){
   if(tickCount == 0){
   money = money + income;
@@ -193,6 +224,11 @@ function earnMoney(){
 
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chgaero(){currentlyDrinking = aeropress;console.log("Currently Drinking: " +currentlyDrinking.name);}
+
+function unlockCafe(){
+  if(moneyTotal>100000){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
+}
 
 window.setInterval(function(){
 earnMoney()
