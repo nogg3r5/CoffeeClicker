@@ -12,6 +12,7 @@ var tickCount = 10;
 var perTicks = 10;
 var moneyTotal = 0;
 var messages = [];
+var job = false;
 
 var coffees = {
   instant: instant,
@@ -60,7 +61,7 @@ function updateMessages(newMsg){
   if(messages.length < 5){
     messages.push(newMsg);
     var list = document.createElement('ul');
-    for(index = 0; index < messages.length; ++index){
+    for(index = messages.length -1; index >= 0; --index){
               var item = document.createElement('li');
               // Set its contents:
               item.appendChild(document.createTextNode(messages[index]));
@@ -68,12 +69,11 @@ function updateMessages(newMsg){
               list.appendChild(item);
           }
           element.replaceWith(list)
-    //document.getElementById('Messages').appendChild(makeUL(messages));
  }else{
   messages.shift();
   messages.push(newMsg)
   var list = document.createElement('ul');
-  for(index = 0; index < messages.length; ++index){
+  for(index = messages.length-1; index >= 0; --index){
             var item = document.createElement('li');
             // Set its contents:
             item.appendChild(document.createTextNode(messages[index]));
@@ -82,7 +82,6 @@ function updateMessages(newMsg){
         }
         element.replaceWith(list)
 }
-  //document.getElementById('Messages').appendChild(makeUL(messages));
  }
 
 function makeUL(array) {
@@ -166,7 +165,7 @@ if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
     btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
     addButtonToContainer(btnjob)
-  }else{updateMessages("Get a job!");}
+  }else{if(job == false){updateMessages("Get a job!");}else{updateMessages("You're broke, wait for some more money to come in.")}}
   }else{
   var supply = undefined;
   for(supply in currentlyDrinking.consumes){
