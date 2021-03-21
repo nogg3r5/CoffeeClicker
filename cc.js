@@ -6,6 +6,9 @@ var drink = false;
 var looprate =125;
 var madeTotal = 0;
 var drunkTotal = 0;
+var income = 0;
+var tickCount = 10;
+var perTick = 0;
 
 var coffees = {
   instant: instant,
@@ -44,10 +47,15 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"}
 {'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
 {'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"},
 {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
-{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"}]
-
+{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"},
+]
+function checkForBtn(checkForBtnName){
+  var check = undefined;
+  qname = !!document.querySelector("#"+checkForBtnName)
+if(qname == true){check = true;}else{check = false;}
+return check;
+  }
 function addButtonToContainer(b) {
-  console.log(b['name'])
     const container = document.getElementById('CoffeeClicker');
     const button = document.createElement('button');
     button.innerText = b['name'];
@@ -72,7 +80,6 @@ checkForSupplies()
 checkForDrink()
 function MakeCoffee(number){
  made = made + number;
- money = money - currentlyDrinking.cost;
  madeTotal = madeTotal +1;
  for(redSupply in currentlyDrinking.consumes){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
@@ -84,7 +91,7 @@ function checkForDrink(){
 };
 
 function checkForSupplies(y){
-  var checksupply = null;
+  var checksupply = undefined;
  for(checksupply in coffeeSupplies){
 //calling function with 1 outputs to console
   if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
@@ -103,18 +110,30 @@ function DrinkCoffee(){
 };
 
 function buySupplies(){
-//Add supplies, if the supply doesnt exist already
-var supply = null;
+if (money < currentlyDrinking.cost){
+  if(checkForBtn("btnJob") == false){
+    btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
+    addButtonToContainer(btnjob)
+  }
+  }else{
+var supply = undefined;
   for(supply in currentlyDrinking.consumes){
-    if(!(supply in coffeeSupplies)){coffeeSupplies[supply] = 1;}
+    if(!(supply in coffeeSupplies)){coffeeSupplies[supply] = 1;
+    money = money - currentlyDrinking.cost;}
     else{
       coffeeSupplies[supply] = coffeeSupplies[supply] + 1;
+      money = money - currentlyDrinking.cost;
     }
-  }checkForSupplies(1)
+  }checkForSupplies(1);
+  updateCounter("Money",money);
+};
 };
 
 function updateCounter(name,counted){
-  const container = document.getElementById('counters');
+qname = !!document.querySelector("#"+name)
+selName = document.querySelector("#"+name)
+if(qname == true){selName.innerHTML= name+": "+counted}else{
+const container = document.getElementById('counters');
   const word = document.createElement('p');
   container.appendChild(word);
   var pID = document.createAttribute("id");
@@ -124,9 +143,22 @@ function updateCounter(name,counted){
   word.appendChild(t);
 }
 
+}
+
+function getJob(){job = true;income = 1;perTick = 10;}
+function earnMoney(){
+  if(tickCount == 0){
+  money = money + income;
+  updateCounter("Money",money)
+  tickCount = perTick;
+}else{tickCount = tickCount -1;}
+}
+
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
+
 window.setInterval(function(){
 checkForDrink()
 checkForSupplies()
+earnMoney()
 }, looprate);
