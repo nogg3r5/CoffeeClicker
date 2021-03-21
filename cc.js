@@ -54,20 +54,36 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"}
 ]
 
 function updateMessages(newMsg){
-  sel =  document.querySelector("#Messages")
-
-  if(sel.childElementCount > 0){sel1 = sel.childNodes[0]}
+  element = document.getElementById('Messages')
+  element = element.childNodes[0]
+  var item = document.createElement('li');
   if(messages.length < 5){
-    messages.push(newMsg)
-    document.getElementById('Messages').appendChild(makeUL(messages));
+    messages.push(newMsg);
+    var list = document.createElement('ul');
+    for(index = 0; index < messages.length; ++index){
+              var item = document.createElement('li');
+              // Set its contents:
+              item.appendChild(document.createTextNode(messages[index]));
+              // Add it to the list:
+              list.appendChild(item);
+          }
+          element.replaceWith(list)
     //document.getElementById('Messages').appendChild(makeUL(messages));
  }else{
   messages.shift();
   messages.push(newMsg)
-  document.getElementById('Messages').replaceChild(makeUL(messages),sel1);
+  var list = document.createElement('ul');
+  for(index = 0; index < messages.length; ++index){
+            var item = document.createElement('li');
+            // Set its contents:
+            item.appendChild(document.createTextNode(messages[index]));
+            // Add it to the list:
+            list.appendChild(item);
+        }
+        element.replaceWith(list)
+}
   //document.getElementById('Messages').appendChild(makeUL(messages));
  }
-}
 
 function makeUL(array) {
 if(array.length < 5){type = "append"}else{type = "replace"}
