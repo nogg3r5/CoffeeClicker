@@ -1,6 +1,7 @@
 var made = 0;
 var drunk = 0;
 var money = 10;
+var units = undefined;
 var coffeeSupplies = [];
 var drink = false;
 var looprate =125;
@@ -8,7 +9,7 @@ var madeTotal = 0;
 var drunkTotal = 0;
 var income = 0;
 var tickCount = 10;
-var perTick = 0;
+var perTicks = 10;
 
 var coffees = {
   instant: instant,
@@ -47,7 +48,7 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"}
 {'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
 {'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"},
 {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
-{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"},
+{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"}
 ]
 function checkForBtn(checkForBtnName){
   var check = undefined;
@@ -93,7 +94,6 @@ function checkForDrink(){
 function checkForSupplies(y){
   var checksupply = undefined;
  for(checksupply in coffeeSupplies){
-//calling function with 1 outputs to console
   if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
  }
  for(cDSupply in currentlyDrinking.consumes){
@@ -114,9 +114,9 @@ if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
     btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
     addButtonToContainer(btnjob)
-  }
+  }else{console.log("Peasant")}
   }else{
-var supply = undefined;
+  var supply = undefined;
   for(supply in currentlyDrinking.consumes){
     if(!(supply in coffeeSupplies)){coffeeSupplies[supply] = 1;
     money = money - currentlyDrinking.cost;}
@@ -125,40 +125,41 @@ var supply = undefined;
       money = money - currentlyDrinking.cost;
     }
   }checkForSupplies(1);
-  updateCounter("Money",money);
+  updateCounter("Money",money,"£");
 };
 };
 
-function updateCounter(name,counted){
+function updateCounter(name,counted,units){
+  if(units == undefined){units = ""}
 qname = !!document.querySelector("#"+name)
 selName = document.querySelector("#"+name)
-if(qname == true){selName.innerHTML= name+": "+counted}else{
+if(qname == true){selName.innerHTML= name+": "+units+counted}else{
 const container = document.getElementById('counters');
   const word = document.createElement('p');
   container.appendChild(word);
   var pID = document.createAttribute("id");
   pID.value = name;
   word.setAttributeNode(pID);
-  var t = document.createTextNode(name+": "+counted);     // Create a text node
+  var t = document.createTextNode(name+": "+units+counted);     // Create a text node
   word.appendChild(t);
 }
 
 }
 
-function getJob(){job = true;income = 1;perTick = 10;}
+function getJob(){job = true;income = income+ 1;perTicks = perTicks-1;}
 function earnMoney(){
   if(tickCount == 0){
   money = money + income;
-  updateCounter("Money",money)
-  tickCount = perTick;
-}else{tickCount = tickCount -1;}
+  updateCounter("Money",money,"£")
+  tickCount = perTicks;
+}else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 
 window.setInterval(function(){
+earnMoney()
 checkForDrink()
 checkForSupplies()
-earnMoney()
 }, looprate);
