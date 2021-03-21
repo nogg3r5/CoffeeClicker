@@ -14,6 +14,7 @@ var moneyTotal = 0;
 var messages = [];
 var job = false;
 var cafeUnlocked = false;
+var jobTickCount
 
 
 var aeropressBrewer = undefined;
@@ -60,7 +61,7 @@ var aeropress = {
   },
   consumes: aeropessConsumes={
   groundCoffee: 1,
-  filters: 1,
+  aeropressFilters: 1,
   water: 1}
 };
 
@@ -71,6 +72,14 @@ var supplyCosts = {
  filters: 1
 }
 
+var supplyNames = {
+  water : "Water",
+  instantCoffee : "Instant Coffee",
+  premiumInstantCoffee : "Premium Instant Coffee",
+  groundCoffee: "Ground Coffee",
+  aeropressFilters : "Paper Aeropress Filters"
+}
+
 var kitCosts = {
   aeropress: 30,
   mokapot: 25
@@ -79,16 +88,25 @@ var kitCosts = {
 var currentlyDrinking = instant;
 var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"},
 {'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
-{'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"},
-{'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"},
-{'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"},
-{'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"}
+{'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"}
 ]
+function showSupplies(){
+  elementParent = document.getElementById('Supplies')
+  elementChild = elementParent.childNodes[0]
+  var list = document.createElement('ul')
+  for(supply in coffeeSupplies){
+    var item = document.createElement('li')
+    item.appendChild(document.createTextNode(supplyNames[supply]+": "+coffeeSupplies[supply]))
+    list.appendChild(item)
+
+  }
+  elementChild.replaceWith(list)
+}
 
 function updateMessages(newMsg){
   element = document.getElementById('Messages')
   element = element.childNodes[0]
-  var item = document.createElement('li');
+//  var item = document.createElement('li');
   if(messages.length < 5){
     messages.push(newMsg);
     var list = document.createElement('ul');
@@ -147,20 +165,34 @@ function MakeCoffee(number){
  for(redSupply in currentlyDrinking.consumes){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
+ checkForSupplies()
 };
 
 function checkForDrink(){
-  if(made > 0){drink= true; document.getElementById("btnDrink").disabled = false; document.getElementById("btnMade").disabled = true;}else{drink=false; document.getElementById("btnDrink").disabled = true; document.getElementById("btnMade").disabled = false;}
+  if(made > 0){
+    drink= true;
+    document.getElementById("btnDrink").disabled = false;
+    document.getElementById("btnMade").disabled = true;
+  }else{
+    drink=false;
+    document.getElementById("btnDrink").disabled = true;
+    document.getElementById("btnMade").disabled = false;
+  }
 };
 
 function checkForSupplies(y){
   var checksupply = undefined;
- for(checksupply in coffeeSupplies){
+  for(checksupply in coffeeSupplies){
   if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
  }
  for(cDSupply in currentlyDrinking.consumes){
-   cDSupplyValue = coffeeSupplies[checksupply];
- if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){haveSupplies = false;document.getElementById("btnMade").disabled = true;}else{haveSupplies = true;document.getElementById("btnMade").disabled = false;}
+   cDSupplyValue = coffeeSupplies[cDSupply];
+ if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){
+   haveSupplies = false;
+   document.getElementById("btnMade").disabled = true;
+ }else{
+   haveSupplies = true;
+   document.getElementById("btnMade").disabled = false;}
 }
 return haveSupplies
 }
@@ -211,7 +243,17 @@ function getJob(){
   job = true;
   income = income+ 1;
   const container = document.getElementById('btnJob');
+  document.getElementById("btnJob").disabled = true;
   container.innerText = "Get a better job";
+  jobTickCount = 100;
+}
+function jobTimer(){
+  if(jobTickCount == 0){
+    document.getElementById("btnJob").disabled = false;
+  }else{
+    jobTickCount = jobTickCount - 1;
+  }
+
 }
 function earnMoney(){
   if(tickCount == 0){
@@ -226,12 +268,17 @@ function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently 
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chgaero(){currentlyDrinking = aeropress;console.log("Currently Drinking: " +currentlyDrinking.name);}
 
-function unlockCafe(){
+function unlocks(){
+
   if(moneyTotal>100000){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
+  if(moneyTotal>100){premiumInstantUnlocked=true;if(checkForBtn("btnPrem") == false){updateMessages("You can buy Premium Instant Coffee!");btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};addButtonToContainer(btnInst);addButtonToContainer(btnPrem);}}
+  if(moneyTotal>200){aeropressUnocked=true;if(checkForBtn("btnAero") == false){updateMessages("You can buy Aeropress!");btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};addButtonToContainer(btnAero)}}
 }
 
 window.setInterval(function(){
 earnMoney()
 checkForDrink()
 checkForSupplies()
+jobTimer()
+showSupplies()
 }, looprate);
