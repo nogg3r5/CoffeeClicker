@@ -17,14 +17,16 @@ var cafeUnlocked = false;
 var jobTickCount = undefined;
 var multiplier = 0;
 
+//These will be the equipment you cna purchase
+var equipment={
+  aeropressBrewer: false,
+  mokaPot: false,
+  pouroverBrewer: false,
+}
+function buyKit(kit){
+  if(kit in equipment == true){}
+}
 
-var aeropressBrewer = undefined;
-
-var coffees = {
-  instant: instant,
-  premiumInstant: premiumInstant,
-  aeropress: aeropress
-};
 
 var instant = {
   name: "Instant",
@@ -53,12 +55,12 @@ var premiumInstant = {
 var aeropress = {
   name: "Aeropress",
   time: 10,
-  cost: 1,
+  cost: 2,
   pretentiousness: 2,
   taste: 5,
   requireskit: true,
   requires: req={
-    kit1: aeropressBrewer,
+    kit1: equipment.aeropressBrewer,
   },
   consumes: aeropessConsumes={
   groundCoffee: 1,
@@ -66,11 +68,43 @@ var aeropress = {
   water: 1}
 };
 
+var mokapot = {
+  name: "Moka Pot",
+  time: 10,
+  cost: 2,
+  pretentiousness: 1,
+  taste: 2,
+  requireskit: true,
+  requires: req={
+    kit1: equipment.mokaPot,
+  },
+  consumes: mokaPotConsumes={
+  groundCoffee: 1,
+  water: 1}
+};
+
+var pourover = {
+  name: "Pourover",
+  time: 10,
+  cost: 2,
+  pretentiousness: 4,
+  taste: 5,
+  requireskit: true,
+  requires: req={
+    kit1: equipment.pouroverBrewer,
+  },
+  consumes: aeropessConsumes={
+  groundCoffee: 1,
+  pouroverFilters: 1,
+  water: 1}
+};
+
 var supplyCosts = {
  water: 1,
  instant: 1,
  premiumInstant: 2,
- filters: 1
+ pouroverFilters: 2,
+ aeropressFilters: 2
 }
 
 var supplyNames = {
@@ -78,12 +112,14 @@ var supplyNames = {
   instantCoffee : "Instant Coffee",
   premiumInstantCoffee : "Premium Instant Coffee",
   groundCoffee: "Ground Coffee",
-  aeropressFilters : "Paper Aeropress Filters"
+  aeropressFilters : "Paper Aeropress Filters",
+  pouroverFilters: "Unbleached Paper Pourover Filters"
 }
 
 var kitCosts = {
   aeropress: 30,
-  mokapot: 25
+  mokapot: 25,
+  pourover: 15
 }
 
 var currentlyDrinking = instant;
@@ -269,11 +305,15 @@ function earnMoney(){
 function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
 function chgaero(){currentlyDrinking = aeropress;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chgMoka(){currentlyDrinking = mokapot;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chgPourover(){currentlyDrinking = pourover;console.log("Currently Drinking: " +currentlyDrinking.name);}
 
 function unlocks(){
-  if(moneyTotal>100000){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
-  if(moneyTotal>100){premiumInstantUnlocked=true;if(checkForBtn("btnPrem") == false){updateMessages("You can buy Premium Instant Coffee!");btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};addButtonToContainer(btnInst);addButtonToContainer(btnPrem);}}
-  if(moneyTotal>200){aeropressUnocked=true;if(checkForBtn("btnAero") == false){updateMessages("You can buy Aeropress!");btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};addButtonToContainer(btnAero)}}
+  if(income>100 && cafeUnlocked == false){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
+  if(income>5){premiumInstantUnlocked=true;if(checkForBtn("btnPrem") == false){updateMessages("You can buy Premium Instant Coffee!");btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};addButtonToContainer(btnInst);addButtonToContainer(btnPrem);}}
+  if(income>20){aeropressUnlocked=true;if(checkForBtn("btnAero") == false){updateMessages("You can buy Aeropress!");btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};addButtonToContainer(btnAero)}}
+  if(income>35){mokapotUnlocked=true;if(checkForBtn("btnMoka") == false){updateMessages("You can buy Moka Pot!");btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka"};addButtonToContainer(btnMoka)}}
+  if(income>60){pouroverUnlocked=true;if(checkForBtn("btnPourover") == false){updateMessages("You can buy Pourover Brewer!");btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover"};addButtonToContainer(btnPourover)}}
 }
 
 window.setInterval(function(){
