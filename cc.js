@@ -17,15 +17,6 @@ var cafeUnlocked = false;
 var jobTickCount = undefined;
 var multiplier = 0;
 
-//These will be the equipment you cna purchase
-var equipment={
-  aeropressBrewer: false,
-  mokaPot: false,
-  pouroverBrewer: false,
-}
-function buyKit(kit){
-  if(kit in equipment == true){}
-}
 
 
 var instant = {
@@ -116,17 +107,48 @@ var supplyNames = {
   pouroverFilters: "Unbleached Paper Pourover Filters"
 }
 
-var kitCosts = {
-  aeropress: 30,
-  mokapot: 25,
-  pourover: 15
-}
-
 var currentlyDrinking = instant;
 var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"},
 {'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
 {'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"}
 ]
+
+var equipment={
+  aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
+  mokaPot: {purchased: false,cost: 25, btn: "btnMoka"},
+  pouroverBrewer:{purchased: false,cost:15, btn: "btnPourover"},
+}
+function buyKit(kit){
+  if(equipment.hasOwnProperty(kit)){
+    //console.log("Kit is valid")
+   if(equipment[kit]["purchased"] == false){
+     //console.log("Kit is not yet purchased")
+      if(equipment[kit]["cost"] < money){
+      //console.log("You can afford it!")
+      money = money - equipment[kit]["cost"]
+        equipment[kit]["purchased"] = true;
+
+      }else{//console.log("you cannot afford it")
+      }
+ }else{//console.log("Kit is already purchased");
+ }
+}else{//console.log("Not valid kit")
+}
+}
+function checkForKit(kit){
+  if(equipment.hasOwnProperty(kit)){
+   if(equipment[kit]["purchased"] == true){
+     if(checkForBtn(equipment[kit]["btn"]) == true){
+     document.getElementById(equipment[kit]["btn"]).disabled = false;
+   }
+   }else{
+     if(checkForBtn(equipment[kit]["btn"]) == true){
+     document.getElementById(equipment[kit]["btn"]).disabled = true;
+   }
+   }
+ }
+}
+
 function showSupplies(){
   elementParent = document.getElementById('Supplies')
   elementChild = elementParent.childNodes[0]
@@ -135,7 +157,6 @@ function showSupplies(){
     var item = document.createElement('li')
     item.appendChild(document.createTextNode(supplyNames[supply]+": "+coffeeSupplies[supply]))
     list.appendChild(item)
-
   }
   elementChild.replaceWith(list)
 }
@@ -167,8 +188,8 @@ function updateMessages(newMsg){
             list.appendChild(item);
         }
         element.replaceWith(list)
-}
  }
+}
 
 function checkForBtn(checkForBtnName){
   var check = undefined;
@@ -309,11 +330,45 @@ function chgMoka(){currentlyDrinking = mokapot;console.log("Currently Drinking: 
 function chgPourover(){currentlyDrinking = pourover;console.log("Currently Drinking: " +currentlyDrinking.name);}
 
 function unlocks(){
-  if(income>100 && cafeUnlocked == false){cafeUnlocked=true;updateMessages("Time to open your own coffee shop!")}
-  if(income>5){premiumInstantUnlocked=true;if(checkForBtn("btnPrem") == false){updateMessages("You can buy Premium Instant Coffee!");btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};addButtonToContainer(btnInst);addButtonToContainer(btnPrem);}}
-  if(income>20){aeropressUnlocked=true;if(checkForBtn("btnAero") == false){updateMessages("You can buy Aeropress!");btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};addButtonToContainer(btnAero)}}
-  if(income>35){mokapotUnlocked=true;if(checkForBtn("btnMoka") == false){updateMessages("You can buy Moka Pot!");btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka"};addButtonToContainer(btnMoka)}}
-  if(income>60){pouroverUnlocked=true;if(checkForBtn("btnPourover") == false){updateMessages("You can buy Pourover Brewer!");btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover"};addButtonToContainer(btnPourover)}}
+  if(income>100 && cafeUnlocked == false && money > 10000){
+    cafeUnlocked=true;
+    updateMessages("Time to open your own coffee shop!")
+  }
+  if(income>5){
+    premiumInstantUnlocked=true;
+    if(checkForBtn("btnPrem") == false){
+      updateMessages("You can buy Premium Instant Coffee!");
+      btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};
+      btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};
+      addButtonToContainer(btnInst);
+      addButtonToContainer(btnPrem);
+    }
+  }
+  if(income>20){
+    aeropressUnlocked=true;
+    if(checkForBtn("btnAero") == false){
+      updateMessages("You can buy Aeropress!");
+      btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};
+      addButtonToContainer(btnAero)
+    }
+      //document.getElementById("btnAero").disabled = true;
+    }
+  if(income>35){
+    mokapotUnlocked=true;
+    if(checkForBtn("btnMoka") == false){
+      updateMessages("You can buy Moka Pot!");
+      btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka"};
+      addButtonToContainer(btnMoka)
+    }
+  }
+  if(income>60){
+    pouroverUnlocked=true;
+    if(checkForBtn("btnPourover") == false){
+      updateMessages("You can buy Pourover Brewer!");
+      btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover"};
+      addButtonToContainer(btnPourover)
+    }
+  }
 }
 
 window.setInterval(function(){
@@ -323,4 +378,5 @@ checkForSupplies()
 jobTimer()
 showSupplies()
 unlocks()
+for(kit in equipment){checkForKit(kit)}
 }, looprate);
