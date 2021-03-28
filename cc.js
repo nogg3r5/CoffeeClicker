@@ -254,12 +254,10 @@ function checkForSupplies(y){
  if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){
    haveSupplies = false;
    document.getElementById("btnMade").disabled = true;
-   if(y>0){console.log("FWe have"+cDSupplyValue+cDSupply)}
    return haveSupplies;
  }else{
    haveSupplies = true;
    document.getElementById("btnMade").disabled = false;}
-      if(y>0){console.log("TWe have"+cDSupplyValue+cDSupply)}
 }
 return haveSupplies
 }
