@@ -246,17 +246,20 @@ function checkForDrink(){
 
 function checkForSupplies(y){
   var checksupply = undefined;
-  //for(checksupply in coffeeSupplies){
-  //if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
- //}
+  for(checksupply in coffeeSupplies){
+  if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
+ }
  for(cDSupply in currentlyDrinking.consumes){
    cDSupplyValue = coffeeSupplies[cDSupply];
  if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){
    haveSupplies = false;
    document.getElementById("btnMade").disabled = true;
+   if(y>0){console.log("FWe have"+cDSupplyValue+cDSupply)}
+   return haveSupplies;
  }else{
    haveSupplies = true;
    document.getElementById("btnMade").disabled = false;}
+      if(y>0){console.log("TWe have"+cDSupplyValue+cDSupply)}
 }
 return haveSupplies
 }
