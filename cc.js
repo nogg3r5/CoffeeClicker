@@ -17,7 +17,11 @@ var cafeUnlocked = false;
 var jobTickCount = undefined;
 var multiplier = 0;
 
-
+var equipment={
+  aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
+  mokaPot: {purchased: false,cost: 25, btn: "btnMoka"},
+  pouroverBrewer:{purchased: false,cost:15, btn: "btnPourover"},
+}
 
 var instant = {
   name: "Instant",
@@ -113,12 +117,8 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"}
 {'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"}
 ]
 
-var equipment={
-  aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
-  mokaPot: {purchased: false,cost: 25, btn: "btnMoka"},
-  pouroverBrewer:{purchased: false,cost:15, btn: "btnPourover"},
-}
-function buyKit(kit){
+
+function buyKit(kit,btn){
   if(equipment.hasOwnProperty(kit)){
     //console.log("Kit is valid")
    if(equipment[kit]["purchased"] == false){
@@ -134,7 +134,9 @@ function buyKit(kit){
  }
 }else{//console.log("Not valid kit")
 }
+if(document.getElementById(btn)){document.getElementById(btn).remove()}
 }
+
 function checkForKit(kit){
   if(equipment.hasOwnProperty(kit)){
    if(equipment[kit]["purchased"] == true){
@@ -210,7 +212,10 @@ function addButtonToContainer(b) {
     button.setAttributeNode(btnID);
     button.setAttributeNode(btnType);
     button.setAttributeNode(btnonclick);
+    //ONly add the button if it doesnt exist.
+    if(checkForBtn(b['id']) == false){
     container.appendChild(button);
+  }
 }
 
 for(b in buttons){
@@ -220,6 +225,7 @@ for(b in buttons){
 function MakeCoffee(number){
  made = made + number;
  madeTotal = madeTotal +1;
+ updateCounter("Made",madeTotal)
  for(redSupply in currentlyDrinking.consumes){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
@@ -240,9 +246,9 @@ function checkForDrink(){
 
 function checkForSupplies(y){
   var checksupply = undefined;
-  for(checksupply in coffeeSupplies){
-  if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
- }
+  //for(checksupply in coffeeSupplies){
+  //if(y>0){console.log(checksupply +" "+ coffeeSupplies[checksupply])}
+ //}
  for(cDSupply in currentlyDrinking.consumes){
    cDSupplyValue = coffeeSupplies[cDSupply];
  if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){
@@ -323,11 +329,11 @@ function earnMoney(){
 }else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
-function chgpremium(){currentlyDrinking = premiumInstant;console.log("Currently Drinking: " +currentlyDrinking.name);}
-function chginstant(){currentlyDrinking = instant;console.log("Currently Drinking: " +currentlyDrinking.name);}
-function chgaero(){currentlyDrinking = aeropress;console.log("Currently Drinking: " +currentlyDrinking.name);}
-function chgMoka(){currentlyDrinking = mokapot;console.log("Currently Drinking: " +currentlyDrinking.name);}
-function chgPourover(){currentlyDrinking = pourover;console.log("Currently Drinking: " +currentlyDrinking.name);}
+function chgpremium(){currentlyDrinking = premiumInstant;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
+function chginstant(){currentlyDrinking = instant;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
+function chgaero(){currentlyDrinking = aeropress;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
+function chgMoka(){currentlyDrinking = mokapot;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
+function chgPourover(){currentlyDrinking = pourover;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
 
 function unlocks(){
   if(income>100 && cafeUnlocked == false && money > 10000){
@@ -349,7 +355,9 @@ function unlocks(){
     if(checkForBtn("btnAero") == false){
       updateMessages("You can buy Aeropress!");
       btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};
+      btnBuyAero = {'name':'Buy Aeropress', 'onClick': 'buyKit("aeropressBrewer","btnBuyAero")', id: "btnBuyAero"};
       addButtonToContainer(btnAero)
+      addButtonToContainer(btnBuyAero)
     }
       //document.getElementById("btnAero").disabled = true;
     }
@@ -358,7 +366,9 @@ function unlocks(){
     if(checkForBtn("btnMoka") == false){
       updateMessages("You can buy Moka Pot!");
       btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka"};
+      btnBuyMoka = {'name':'Buy Mokapot', 'onClick': 'buyKit("mokaPot","btnBuyMoka")', id: "btnBuyMoka"};
       addButtonToContainer(btnMoka)
+      addButtonToContainer(btnBuyMoka)
     }
   }
   if(income>60){
@@ -366,7 +376,9 @@ function unlocks(){
     if(checkForBtn("btnPourover") == false){
       updateMessages("You can buy Pourover Brewer!");
       btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover"};
+      btnBuyPouroverBrewer = {'name':'Buy Pourover Brewer', 'onClick': 'buyKit("pouroverBrewer","btnBuyPouroverBrewer")', id: "btnBuyPouroverBrewer"};
       addButtonToContainer(btnPourover)
+      addButtonToContainer(btnBuyPouroverBrewer)
     }
   }
 }
