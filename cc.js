@@ -112,9 +112,9 @@ var supplyNames = {
 }
 
 var currentlyDrinking = instant;
-var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade"},
-{'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink"},
-{'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies"}
+var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade", container:"CoffeeClicker"},
+{'name':'Drink Coffee', 'onClick': 'DrinkCoffee(1)', id: "btnDrink", container:"CoffeeClicker"},
+{'name':'Buy Supplies', 'onClick': 'buySupplies()', id: "btnBuySupplies", container:"CoffeeClicker"}
 ]
 
 
@@ -200,7 +200,7 @@ if(qname == true){check = true;}else{check = false;}
 return check;
   }
 function addButtonToContainer(b) {
-    const container = document.getElementById('CoffeeClicker');
+    const container = document.getElementById(b['container']);
     const button = document.createElement('button');
     button.innerText = b['name'];
     var btnID = document.createAttribute("id");
@@ -270,7 +270,7 @@ function DrinkCoffee(){
 function buySupplies(multiplier){
 if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
-    btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob"};
+    btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob", container:"CoffeeClicker"};
     addButtonToContainer(btnjob)
   }else{if(job == false){updateMessages("Get a job!");}else{updateMessages("You're broke, wait for some more money to come in.")}}
   }else{
@@ -344,8 +344,8 @@ function unlocks(){
     premiumInstantUnlocked=true;
     if(checkForBtn("btnPrem") == false){
       updateMessages("You can buy Premium Instant Coffee!");
-      btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem"};
-      btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst"};
+      btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem", container:"CoffeeClicker"};
+      btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst", container:"CoffeeClicker"};
       addButtonToContainer(btnInst);
       addButtonToContainer(btnPrem);
     }
@@ -354,8 +354,8 @@ function unlocks(){
     aeropressUnlocked=true;
     if(checkForBtn("btnAero") == false){
       updateMessages("You can buy Aeropress!");
-      btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero"};
-      btnBuyAero = {'name':'Buy Aeropress', 'onClick': 'buyKit("aeropressBrewer","btnBuyAero")', id: "btnBuyAero"};
+      btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero", container:"CoffeeClicker"};
+      btnBuyAero = {'name':'Buy Aeropress', 'onClick': 'buyKit("aeropressBrewer","btnBuyAero")', id: "btnBuyAero", container:"Upgrades"};
       addButtonToContainer(btnAero)
       addButtonToContainer(btnBuyAero)
     }
@@ -365,8 +365,8 @@ function unlocks(){
     mokapotUnlocked=true;
     if(checkForBtn("btnMoka") == false){
       updateMessages("You can buy Moka Pot!");
-      btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka"};
-      btnBuyMoka = {'name':'Buy Mokapot', 'onClick': 'buyKit("mokaPot","btnBuyMoka")', id: "btnBuyMoka"};
+      btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka", container:"CoffeeClicker"};
+      btnBuyMoka = {'name':'Buy Mokapot', 'onClick': 'buyKit("mokaPot","btnBuyMoka")', id: "btnBuyMoka", container:"Upgrades"};
       addButtonToContainer(btnMoka)
       addButtonToContainer(btnBuyMoka)
     }
@@ -375,8 +375,8 @@ function unlocks(){
     pouroverUnlocked=true;
     if(checkForBtn("btnPourover") == false){
       updateMessages("You can buy Pourover Brewer!");
-      btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover"};
-      btnBuyPouroverBrewer = {'name':'Buy Pourover Brewer', 'onClick': 'buyKit("pouroverBrewer","btnBuyPouroverBrewer")', id: "btnBuyPouroverBrewer"};
+      btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover", container:"CoffeeClicker"};
+      btnBuyPouroverBrewer = {'name':'Buy Pourover Brewer', 'onClick': 'buyKit("pouroverBrewer","btnBuyPouroverBrewer")', id: "btnBuyPouroverBrewer", container:"Upgrades"};
       addButtonToContainer(btnPourover)
       addButtonToContainer(btnBuyPouroverBrewer)
     }
