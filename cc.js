@@ -16,11 +16,13 @@ var job = false;
 var cafeUnlocked = false;
 var jobTickCount = undefined;
 var multiplier = 0;
+var makeCoffeeTime = 0;
 
 var equipment={
   aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
   mokaPot: {purchased: false,cost: 25, btn: "btnMoka"},
   pouroverBrewer:{purchased: false,cost:15, btn: "btnPourover"},
+  espressoMachine:{purchased: false, cost:1500, btn: "btnEspresso"}
 }
 
 var instant = {
@@ -49,7 +51,7 @@ var premiumInstant = {
 
 var aeropress = {
   name: "Aeropress",
-  time: 10,
+  time: 15,
   cost: 2,
   pretentiousness: 2,
   taste: 5,
@@ -80,7 +82,7 @@ var mokapot = {
 
 var pourover = {
   name: "Pourover",
-  time: 10,
+  time: 20,
   cost: 2,
   pretentiousness: 4,
   taste: 5,
@@ -88,9 +90,25 @@ var pourover = {
   requires: req={
     kit1: equipment.pouroverBrewer,
   },
-  consumes: aeropessConsumes={
+  consumes: pouroverConsumes={
   groundCoffee: 1,
   pouroverFilters: 1,
+  water: 1}
+};
+
+var espresso = {
+  name: "Espresso",
+  time: 50,
+  cost: 5,
+  pretentiousness: 10,
+  taste: 15,
+  requireskit: true,
+  requires: req={
+    kit1: equipment.espressoMachine,
+  },
+  consumes: espressoConsumes={
+  groundCoffee: 1,
+  milk: 1,
   water: 1}
 };
 
@@ -99,7 +117,8 @@ var supplyCosts = {
  instant: 1,
  premiumInstant: 2,
  pouroverFilters: 2,
- aeropressFilters: 2
+ aeropressFilters: 2,
+ milk: 2
 }
 
 var supplyNames = {
@@ -108,7 +127,8 @@ var supplyNames = {
   premiumInstantCoffee : "Premium Instant Coffee",
   groundCoffee: "Ground Coffee",
   aeropressFilters : "Paper Aeropress Filters",
-  pouroverFilters: "Unbleached Paper Pourover Filters"
+  pouroverFilters: "Unbleached Paper Pourover Filters",
+  milk: "Milk"
 }
 
 var currentlyDrinking = instant;
@@ -120,21 +140,21 @@ var buttons = [{'name':'Make Coffee', 'onClick': 'MakeCoffee(1)', id: "btnMade",
 
 function buyKit(kit,btn){
   if(equipment.hasOwnProperty(kit)){
-    //console.log("Kit is valid")
+    console.log("Kit is valid")
    if(equipment[kit]["purchased"] == false){
-     //console.log("Kit is not yet purchased")
+     console.log("Kit is not yet purchased")
       if(equipment[kit]["cost"] < money){
-      //console.log("You can afford it!")
+      console.log("You can afford it!")
       money = money - equipment[kit]["cost"]
         equipment[kit]["purchased"] = true;
-
-      }else{//console.log("you cannot afford it")
-      }
- }else{//console.log("Kit is already purchased");
- }
-}else{//console.log("Not valid kit")
-}
 if(document.getElementById(btn)){document.getElementById(btn).remove()}
+      }else{console.log("you cannot afford it")
+      }
+ }else{console.log("Kit is already purchased");
+ }
+}else{console.log("Not valid kit")
+}
+
 }
 
 function checkForKit(kit){
@@ -199,6 +219,16 @@ function checkForBtn(checkForBtnName){
 if(qname == true){check = true;}else{check = false;}
 return check;
   }
+function hideButton(checkforBtnState){
+ var flipState = undefined;
+ flipState = document.querySelector("#"+checkforBtnState)
+ if(flipState.disabled == false){flipState.disabled = true;}
+}
+function showButton(checkforBtnState){
+ var flipState = undefined;
+ flipState = document.querySelector("#"+checkforBtnState)
+ if(flipState.disabled == true){flipState.disabled = false;}
+}
 function addButtonToContainer(b) {
     const container = document.getElementById(b['container']);
     const button = document.createElement('button');
@@ -230,17 +260,26 @@ function MakeCoffee(number){
    coffeeSupplies[redSupply] = coffeeSupplies[redSupply] - currentlyDrinking.consumes[redSupply];
  }
  checkForSupplies()
+ makeCoffeeTime = currentlyDrinking.time;
 };
+
+//make drinks coldown timer
+function makeCoffeeTimer(){
+  if(makeCoffeeTime != 0){
+        makeCoffeeTime = makeCoffeeTime -1;
+    console.log('Cooling down '+makeCoffeeTime);
+  }
+}
 
 function checkForDrink(){
   if(made > 0){
     drink= true;
     document.getElementById("btnDrink").disabled = false;
-    document.getElementById("btnMade").disabled = true;
+    //document.getElementById("btnMade").disabled = true;
   }else{
     drink=false;
     document.getElementById("btnDrink").disabled = true;
-    document.getElementById("btnMade").disabled = false;
+    //document.getElementById("btnMade").disabled = false;
   }
 };
 
@@ -251,7 +290,7 @@ function checkForSupplies(y){
  }
  for(cDSupply in currentlyDrinking.consumes){
    cDSupplyValue = coffeeSupplies[cDSupply];
- if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1){
+ if(!(cDSupply in coffeeSupplies) || cDSupplyValue < 1 || makeCoffeeTime > 0){
    haveSupplies = false;
    document.getElementById("btnMade").disabled = true;
    return haveSupplies;
@@ -335,6 +374,7 @@ function chginstant(){currentlyDrinking = instant;updateMessages("Currently Drin
 function chgaero(){currentlyDrinking = aeropress;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
 function chgMoka(){currentlyDrinking = mokapot;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
 function chgPourover(){currentlyDrinking = pourover;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
+function chgEspresso(){currentlyDrinking = espresso;updateMessages("Currently Drinking: " +currentlyDrinking.name);}
 
 function unlocks(){
   if(income>100 && cafeUnlocked == false && money > 10000){
@@ -382,6 +422,16 @@ function unlocks(){
       addButtonToContainer(btnBuyPouroverBrewer)
     }
   }
+  if(income>100){
+    espressoUnlocked=true;
+    if(checkForBtn("btnEspresso") == false){
+    updateMessages("You can buy an Espresso Machine!")
+    btnEspresso = {'name':'Switch to Espresso', 'onClick': 'chgEspresso()', id: "btnEspresso", container:"CoffeeClicker"};
+    btnBuyEspressoMachine = {'name':'Buy Espresso Machine', 'onClick': 'buyKit("espressoMachine","btnBuyEspressoMachine")', id: "btnBuyEspressoMachine", container:"Upgrades"};
+    addButtonToContainer(btnEspresso)
+    addButtonToContainer(btnBuyEspressoMachine)
+  }
+}
 }
 
 window.setInterval(function(){
@@ -391,5 +441,6 @@ checkForSupplies()
 jobTimer()
 showSupplies()
 unlocks()
+makeCoffeeTimer()
 for(kit in equipment){checkForKit(kit)}
 }, looprate);
