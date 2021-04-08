@@ -17,6 +17,8 @@ var cafeUnlocked = false;
 var jobTickCount = undefined;
 var multiplier = 0;
 var makeCoffeeTime = 0;
+var pretentiousness = 0;
+var caffeine = 0;
 
 var equipment={
   aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
@@ -31,6 +33,7 @@ var instant = {
   cost: 1,
   pretentiousness: 0,
   taste: 1,
+  caffeine: 50,
   requireskit: false,
   consumes: instantConsumes={
   instantCoffee: 1,
@@ -43,6 +46,7 @@ var premiumInstant = {
   cost: 2,
   pretentiousness: 1,
   taste: 2,
+  caffeine: 50,
   requireskit: false,
   consumes: premiumInstantConsumes={
   premiumInstantCoffee: 1,
@@ -55,6 +59,7 @@ var aeropress = {
   cost: 2,
   pretentiousness: 2,
   taste: 5,
+  caffeine: 70,
   requireskit: true,
   requires: req={
     kit1: equipment.aeropressBrewer,
@@ -71,6 +76,7 @@ var mokapot = {
   cost: 2,
   pretentiousness: 1,
   taste: 2,
+  caffeine: 70,
   requireskit: true,
   requires: req={
     kit1: equipment.mokaPot,
@@ -86,6 +92,7 @@ var pourover = {
   cost: 2,
   pretentiousness: 4,
   taste: 5,
+  caffeine:90,
   requireskit: true,
   requires: req={
     kit1: equipment.pouroverBrewer,
@@ -102,6 +109,7 @@ var espresso = {
   cost: 5,
   pretentiousness: 10,
   taste: 15,
+  caffeine: 110,
   requireskit: true,
   requires: req={
     kit1: equipment.espressoMachine,
@@ -267,8 +275,7 @@ function MakeCoffee(number){
 function makeCoffeeTimer(){
   if(makeCoffeeTime != 0){
         makeCoffeeTime = makeCoffeeTime -1;
-    console.log('Cooling down '+makeCoffeeTime);
-  }
+      }
 }
 
 function checkForDrink(){
@@ -304,7 +311,10 @@ return haveSupplies
 function DrinkCoffee(){
  made = made - 1;
  drunkTotal = drunkTotal + 1;
+ pretentiousness = pretentiousness +currentlyDrinking.pretentiousness;
  updateCounter("Drunk",drunkTotal)
+ updateCounter("Pretentiousness",pretentiousness)
+ decaffeinate(currentlyDrinking.caffeine)
 };
 
 function buySupplies(multiplier){
@@ -329,6 +339,7 @@ if (money < currentlyDrinking.cost){
 
 function updateCounter(name,counted,units){
   if(units == undefined){units = ""}
+  if(counted == 0){return}
 qname = !!document.querySelector("#"+name)
 selName = document.querySelector("#"+name)
 if(qname == true){selName.innerHTML= name+": "+units+counted}else{
@@ -434,6 +445,18 @@ function unlocks(){
 }
 }
 
+function decaffeinate(addCaffeine){
+    if(addCaffeine > 0){caffeine = caffeine + addCaffeine}
+    if(caffeine > 10500){die()}
+  if(caffeine == 0){return}else{
+    caffeine = caffeine - 1;
+    updateCounter("Caffeine",caffeine,"mg")
+  }
+}
+function die(){
+alert("You drank too much coffee! You died.");
+  location.reload()
+}
 window.setInterval(function(){
 earnMoney()
 checkForDrink()
@@ -442,5 +465,6 @@ jobTimer()
 showSupplies()
 unlocks()
 makeCoffeeTimer()
+decaffeinate()
 for(kit in equipment){checkForKit(kit)}
 }, looprate);
