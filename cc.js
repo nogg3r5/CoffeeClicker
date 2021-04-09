@@ -30,7 +30,7 @@ var equipment={
 var instant = {
   name: "Instant",
   time: 5,
-  cost: 1,
+  cost: 2,
   pretentiousness: 0,
   taste: 1,
   caffeine: 50,
@@ -122,10 +122,11 @@ var espresso = {
 
 var supplyCosts = {
  water: 1,
- instant: 1,
- premiumInstant: 2,
+ instantCoffee: 1,
+ premiumInstantCoffee: 2,
  pouroverFilters: 2,
  aeropressFilters: 2,
+ groundCoffee: 5,
  milk: 2
 }
 
@@ -317,6 +318,7 @@ function DrinkCoffee(){
  decaffeinate(currentlyDrinking.caffeine)
 };
 
+
 function buySupplies(multiplier){
 if (money < currentlyDrinking.cost){
   if(checkForBtn("btnJob") == false){
@@ -324,24 +326,29 @@ if (money < currentlyDrinking.cost){
     addButtonToContainer(btnjob)
   }else{if(job == false){updateMessages("Get a job!");}else{updateMessages("You're broke, wait for some more money to come in.")}}
   }else{
-  var supply = undefined;
+  //var supply = 0;
   for(supply in currentlyDrinking.consumes){
-    if(!(supply in coffeeSupplies)){coffeeSupplies[supply] = 1;
-    money = money - currentlyDrinking.cost;}
-    else{
+    if(!(supply in coffeeSupplies)){
+      coffeeSupplies[supply] = 1;
+      console.log(supply)
+      console.log(supplyCosts[supply])
+      console.log("Not "+typeof(supplyCosts[supply]));
+      money = money - supplyCosts[supply];
+  }else{
+    console.log("is "+typeof(supplyCosts[supply]))
       coffeeSupplies[supply] = coffeeSupplies[supply] + 1;
-      money = money - currentlyDrinking.cost;
+      money = money - supplyCosts[supply];
     }
-  }checkForSupplies(1);
+  }checkForSupplies();
   updateCounter("Money",money,"£");
 };
 };
 
 function updateCounter(name,counted,units){
-  if(units == undefined){units = ""}
+  if(units == undefined){units = ""};
   if(counted == 0){return}
-qname = !!document.querySelector("#"+name)
-selName = document.querySelector("#"+name)
+var qname = !!document.querySelector("#"+name);
+var selName = document.querySelector("#"+name)
 if(qname == true){selName.innerHTML= name+": "+units+counted}else{
 const container = document.getElementById('counters');
   const word = document.createElement('p');
@@ -361,6 +368,7 @@ function getJob(){
   document.getElementById("btnJob").disabled = true;
   container.innerText = "Get a better job";
   jobTickCount = 100;
+
 }
 function jobTimer(){
   if(jobTickCount == 0){
@@ -376,7 +384,7 @@ function earnMoney(){
   updateCounter("Money",money,"£")
   tickCount = perTicks;
   moneyTotal = moneyTotal + income;
-  if(job == true){updateCounter("LifetimeEarnings",moneyTotal,"£")}
+  if(job == true){updateCounter("LifetimeEarnings",moneyTotal,"£");  updateCounter('Pay',income,"£")}
 }else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
