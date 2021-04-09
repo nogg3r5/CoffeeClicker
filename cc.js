@@ -344,6 +344,7 @@ updateCounter("Money",money,"£");
 
 function updateCounter(name,counted,units){
   if(units == undefined){units = ""};
+  counted = +counted.toFixed(2)
   //if(counted == 0){return}
 var qname = !!document.querySelector("#"+name);
 var selName = document.querySelector("#"+name)
@@ -361,13 +362,15 @@ const container = document.getElementById('counters');
 
 function getJob(){
   job = true;
-  income = income+ 1;
+  if(income == 0){income = 1}else{
+  income = income + (income/3);
+  income = +income.toFixed(2)}
   const container = document.getElementById('btnJob');
   document.getElementById("btnJob").disabled = true;
   container.innerText = "Get a better job";
   jobTickCount = 100;
-
 }
+
 function jobTimer(){
   if(jobTickCount == 0){
     document.getElementById("btnJob").disabled = false;
@@ -379,6 +382,7 @@ function jobTimer(){
 function earnMoney(){
   if(tickCount == 0){
   money = money + income;
+  money = +money.toFixed(5)
   updateCounter("Money",money,"£")
   tickCount = perTicks;
   moneyTotal = moneyTotal + income;
