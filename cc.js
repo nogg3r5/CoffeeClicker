@@ -320,33 +320,31 @@ function DrinkCoffee(){
 
 
 function buySupplies(multiplier){
-if (money < currentlyDrinking.cost){
+  var cost = 0
+  for(supply in currentlyDrinking.consumes){cost = cost + supplyCosts[supply]}
+if (money < cost){
   if(checkForBtn("btnJob") == false){
     btnjob = {'name':'Get a Job', 'onClick': 'getJob()', id: "btnJob", container:"CoffeeClicker"};
     addButtonToContainer(btnjob)
   }else{if(job == false){updateMessages("Get a job!");}else{updateMessages("You're broke, wait for some more money to come in.")}}
   }else{
-  //var supply = 0;
   for(supply in currentlyDrinking.consumes){
     if(!(supply in coffeeSupplies)){
       coffeeSupplies[supply] = 1;
-      console.log(supply)
-      console.log(supplyCosts[supply])
-      console.log("Not "+typeof(supplyCosts[supply]));
       money = money - supplyCosts[supply];
   }else{
-    console.log("is "+typeof(supplyCosts[supply]))
       coffeeSupplies[supply] = coffeeSupplies[supply] + 1;
       money = money - supplyCosts[supply];
     }
   }checkForSupplies();
-  updateCounter("Money",money,"£");
+
 };
+updateCounter("Money",money,"£");
 };
 
 function updateCounter(name,counted,units){
   if(units == undefined){units = ""};
-  if(counted == 0){return}
+  //if(counted == 0){return}
 var qname = !!document.querySelector("#"+name);
 var selName = document.querySelector("#"+name)
 if(qname == true){selName.innerHTML= name+": "+units+counted}else{
@@ -474,5 +472,6 @@ showSupplies()
 unlocks()
 makeCoffeeTimer()
 decaffeinate()
+updateCounter("Money",money,"£");
 for(kit in equipment){checkForKit(kit)}
 }, looprate);
