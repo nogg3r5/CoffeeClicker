@@ -19,6 +19,7 @@ var multiplier = 0;
 var makeCoffeeTime = 0;
 var pretentiousness = 0;
 var caffeine = 0;
+var gods = ['James Hoffman', 'Scott Rao', 'Carol from WholeLatteLove']
 
 var equipment={
   aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
@@ -464,7 +465,9 @@ function decaffeinate(addCaffeine){
   }
 }
 function die(){
+  god = gods[Math.floor(Math.random() * gods.length)];
 alert("You drank too much coffee! You died.");
+alert("The ghost of "+god+" appeared")
   location.reload()
 }
 window.setInterval(function(){
