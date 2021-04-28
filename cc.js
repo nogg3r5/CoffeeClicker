@@ -467,7 +467,7 @@ function decaffeinate(addCaffeine){
 function die(){
   god = gods[Math.floor(Math.random() * gods.length)];
 alert("You drank too much coffee! You died.");
-alert("The ghost of "+god+" appeared")
+alert("The ghost of "+god+" appeared and informed you of the virtues of moderate caffeine consumption.")
   location.reload()
 }
 window.setInterval(function(){
