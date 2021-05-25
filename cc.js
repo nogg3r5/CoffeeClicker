@@ -19,13 +19,16 @@ var multiplier = 0;
 var makeCoffeeTime = 0;
 var pretentiousness = 0;
 var caffeine = 0;
+var caffMultiplier = 0;
 var gods = ['James Hoffman', 'Scott Rao', 'Carol from WholeLatteLove']
 
 var equipment={
   aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
   mokaPot: {purchased: false,cost: 25, btn: "btnMoka"},
   pouroverBrewer:{purchased: false,cost:15, btn: "btnPourover"},
-  espressoMachine:{purchased: false, cost:1500, btn: "btnEspresso"}
+  espressoMachine:{purchased: false, cost:1500, btn: "btnEspresso"},
+  basicEspressoMachine:{purchased: false, cost:3000, btn: "btnBasicEspresso"},
+  advancedEspressoMachine:{purchased: false, cost:15000, btn: "btnAdvancedEspresso"}
 }
 
 var instant = {
@@ -35,6 +38,7 @@ var instant = {
   pretentiousness: 0,
   taste: 1,
   caffeine: 50,
+  godShotMultiplier: 1,
   requireskit: false,
   consumes: instantConsumes={
   instantCoffee: 1,
@@ -48,6 +52,7 @@ var premiumInstant = {
   pretentiousness: 1,
   taste: 2,
   caffeine: 50,
+  godShotMultiplier: 1,
   requireskit: false,
   consumes: premiumInstantConsumes={
   premiumInstantCoffee: 1,
@@ -61,6 +66,7 @@ var aeropress = {
   pretentiousness: 2,
   taste: 5,
   caffeine: 70,
+  godShotMultiplier: 2,
   requireskit: true,
   requires: req={
     kit1: equipment.aeropressBrewer,
@@ -78,6 +84,7 @@ var mokapot = {
   pretentiousness: 1,
   taste: 2,
   caffeine: 70,
+  godShotMultiplier: 1,
   requireskit: true,
   requires: req={
     kit1: equipment.mokaPot,
@@ -94,6 +101,7 @@ var pourover = {
   pretentiousness: 4,
   taste: 5,
   caffeine:90,
+  godShotMultiplier: 15,
   requireskit: true,
   requires: req={
     kit1: equipment.pouroverBrewer,
@@ -111,6 +119,7 @@ var espresso = {
   pretentiousness: 10,
   taste: 15,
   caffeine: 110,
+  godShotMultiplier: 10,
   requireskit: true,
   requires: req={
     kit1: equipment.espressoMachine,
@@ -273,7 +282,14 @@ function MakeCoffee(number){
  makeCoffeeTime = currentlyDrinking.time;
 };
 
-//make drinks coldown timer
+function GodShot(){
+  godshot = Math.floor(Math.random() * 101)
+  console.log(godshot)
+  if(godshot < currentlyDrinking.godShotMultiplier){console.log("GODSHOT! "+godshot)}else{console.log("Notgodshot "+godshot)}
+}
+
+
+//make drinks cooldown timer
 function makeCoffeeTimer(){
   if(makeCoffeeTime != 0){
         makeCoffeeTime = makeCoffeeTime -1;
@@ -314,6 +330,7 @@ function DrinkCoffee(){
  made = made - 1;
  drunkTotal = drunkTotal + 1;
  pretentiousness = pretentiousness +currentlyDrinking.pretentiousness;
+ GodShot()
  updateCounter("Drunk",drunkTotal)
  updateCounter("Pretentiousness",pretentiousness)
  decaffeinate(currentlyDrinking.caffeine)
@@ -381,8 +398,11 @@ function jobTimer(){
 
 }
 function earnMoney(){
+  if(caffeine > 100){
+    caffMultiplier = 1.1;
+  }else{caffMultiplier = 1}
   if(tickCount == 0){
-  money = money + income;
+  money = money + (income * caffMultiplier);
   money = +money.toFixed(5)
   updateCounter("Money",money,"£")
   tickCount = perTicks;
