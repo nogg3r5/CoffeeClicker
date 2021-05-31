@@ -203,9 +203,11 @@ function showSupplies(){
 }
 
 function updateMessages(newMsg){
-  element = document.getElementById('Messages')
-  element = element.childNodes[0]
-//  var item = document.createElement('li');
+  element = document.getElementById('Messages').childNodes[0]
+  //element = element.childNodes[0]
+  if(element.childNodes.length > 0){
+   if(element.childNodes[0].innerText = newMsg.toString()){return}
+  }
   if(messages.length < 5){
     messages.push(newMsg);
     var list = document.createElement('ul');
@@ -229,7 +231,7 @@ function updateMessages(newMsg){
             list.appendChild(item);
         }
         element.replaceWith(list)
- }
+  }
 }
 
 function checkForBtn(checkForBtnName){
@@ -284,8 +286,7 @@ function MakeCoffee(number){
 
 function GodShot(){
   godshot = Math.floor(Math.random() * 101)
-  console.log(godshot)
-  if(godshot < currentlyDrinking.godShotMultiplier){console.log("GODSHOT! "+godshot)}else{console.log("Notgodshot "+godshot)}
+  if(godshot < currentlyDrinking.godShotMultiplier){console.log("GODSHOT! "+godshot);caffeine = 1000}else{console.log("Notgodshot "+godshot)}
 }
 
 
@@ -329,6 +330,7 @@ return haveSupplies
 function DrinkCoffee(){
  made = made - 1;
  drunkTotal = drunkTotal + 1;
+ if(caffeine >100){updateMessages('Coffee makes the work go faster')}
  pretentiousness = pretentiousness +currentlyDrinking.pretentiousness;
  GodShot()
  updateCounter("Drunk",drunkTotal)
@@ -380,8 +382,9 @@ const container = document.getElementById('counters');
 
 function getJob(){
   job = true;
-  if(income == 0){income = 1}else{
+  if(income == 0){income = 1;updateMessages('Oooh, a job!')}else{
   income = income + (income/3);
+  updateMessages('Payrise, time to  buy more coffee!')
   income = +income.toFixed(2)}
   const container = document.getElementById('btnJob');
   document.getElementById("btnJob").disabled = true;
