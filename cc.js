@@ -20,7 +20,19 @@ var makeCoffeeTime = 0;
 var pretentiousness = 0;
 var caffeine = 0;
 var caffMultiplier = 0;
+var jobIndex = 0;
+var payriseCount = 0;
 var gods = ['James Hoffman', 'Scott Rao', 'Carol from WholeLatteLove']
+
+var jobs = [
+  {jobTitle:"Cup Washer",tips: 0,pay: 5,description:"it sucks."},
+  {jobTitle:"Waiter",tips: 50, pay: 10,description:"it still sucks, but the tips are good."},
+  {jobTitle:"Barista",tips:40, pay: 30,description:"it doesn't suck and there are tips."},
+  {jobTitle:"Manager",tips:0, pay: 100,description:"it sucks, but because of the employees, not the customers."},
+  {jobTitle:"Roaster",tips:0,pay:200,description:"it doesnt suck...it smells."},
+  {jobTitle:"Head Roaster",tips:0,pay:200,description:"it doesnt suck, the pay is good, it still kinda smells, but you have an office now."},
+  {jobTitle:"Owner",tips:0,pay:1000,description:"now its your fault that everyone else's job sucks, but you get paid LOADS."},
+]
 
 var equipment={
   aeropressBrewer: {purchased:false,cost: 30,btn: "btnAero"},
@@ -204,10 +216,6 @@ function showSupplies(){
 
 function updateMessages(newMsg){
   element = document.getElementById('Messages').childNodes[0]
-  //element = element.childNodes[0]
-  if(element.childNodes.length > 0){
-   if(element.childNodes[0].innerText = newMsg.toString()){return}
-  }
   if(messages.length < 5){
     messages.push(newMsg);
     var list = document.createElement('ul');
@@ -250,6 +258,8 @@ function showButton(checkforBtnState){
  flipState = document.querySelector("#"+checkforBtnState)
  if(flipState.disabled == true){flipState.disabled = false;}
 }
+
+//Accepts a list like this: btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst", container:"CoffeeClicker"};
 function addButtonToContainer(b) {
     const container = document.getElementById(b['container']);
     const button = document.createElement('button');
@@ -382,14 +392,24 @@ const container = document.getElementById('counters');
 
 function getJob(){
   job = true;
-  if(income == 0){income = 1;updateMessages('Oooh, a job!')}else{
+  payriseCount = payriseCount + 1
+  if(income == 0){income = 1;updateMessages('Oooh, a job! You\'re a '+jobs[jobIndex].jobTitle+", "+jobs[jobIndex].description)}else{
   income = income + (income/3);
   updateMessages('Payrise, time to  buy more coffee!')
   income = +income.toFixed(2)}
   const container = document.getElementById('btnJob');
   document.getElementById("btnJob").disabled = true;
-  container.innerText = "Get a better job";
+  container.innerText = "Payrise available!";
   jobTickCount = 100;
+  btnPromo={'name':'Promotion Available!', 'onClick': 'getPromo()', id: "btnPromo", container:"CoffeeClicker"};
+  if(payriseCount % 10 === 0){addButtonToContainer(btnPromo)}
+}
+
+function getPromo(){
+  document.getElementById('btnPromo').remove()
+  jobIndex = jobIndex + 1
+  updateMessages('Congratulations, now you\'re a '+jobs[jobIndex].jobTitle+", "+jobs[jobIndex].description)
+  income = income + (income/2)
 }
 
 function jobTimer(){
@@ -430,8 +450,8 @@ function unlocks(){
     premiumInstantUnlocked=true;
     if(checkForBtn("btnPrem") == false){
       updateMessages("You can buy Premium Instant Coffee!");
-      btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem", container:"CoffeeClicker"};
-      btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst", container:"CoffeeClicker"};
+      btnPrem = {'name':'Switch to Premium', 'onClick': 'chgpremium()', id: "btnPrem", container:"Coffees"};
+      btnInst={'name':'Switch to Instant', 'onClick': 'chginstant()', id: "btnInst", container:"Coffees"};
       addButtonToContainer(btnInst);
       addButtonToContainer(btnPrem);
     }
@@ -440,7 +460,7 @@ function unlocks(){
     aeropressUnlocked=true;
     if(checkForBtn("btnAero") == false){
       updateMessages("You can buy Aeropress!");
-      btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero", container:"CoffeeClicker"};
+      btnAero = {'name':'Switch to Aeropress', 'onClick': 'chgaero()', id: "btnAero", container:"Coffees"};
       btnBuyAero = {'name':'Buy Aeropress', 'onClick': 'buyKit("aeropressBrewer","btnBuyAero")', id: "btnBuyAero", container:"Upgrades"};
       addButtonToContainer(btnAero)
       addButtonToContainer(btnBuyAero)
@@ -451,7 +471,7 @@ function unlocks(){
     mokapotUnlocked=true;
     if(checkForBtn("btnMoka") == false){
       updateMessages("You can buy Moka Pot!");
-      btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka", container:"CoffeeClicker"};
+      btnMoka = {'name':'Switch to Mokapot', 'onClick': 'chgMoka()', id: "btnMoka", container:"Coffees"};
       btnBuyMoka = {'name':'Buy Mokapot', 'onClick': 'buyKit("mokaPot","btnBuyMoka")', id: "btnBuyMoka", container:"Upgrades"};
       addButtonToContainer(btnMoka)
       addButtonToContainer(btnBuyMoka)
@@ -461,7 +481,7 @@ function unlocks(){
     pouroverUnlocked=true;
     if(checkForBtn("btnPourover") == false){
       updateMessages("You can buy Pourover Brewer!");
-      btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover", container:"CoffeeClicker"};
+      btnPourover = {'name':'Switch to Pourover', 'onClick': 'chgPourover()', id: "btnPourover", container:"Coffees"};
       btnBuyPouroverBrewer = {'name':'Buy Pourover Brewer', 'onClick': 'buyKit("pouroverBrewer","btnBuyPouroverBrewer")', id: "btnBuyPouroverBrewer", container:"Upgrades"};
       addButtonToContainer(btnPourover)
       addButtonToContainer(btnBuyPouroverBrewer)
@@ -470,8 +490,8 @@ function unlocks(){
   if(income>100){
     espressoUnlocked=true;
     if(checkForBtn("btnEspresso") == false){
-    updateMessages("You can buy an Espresso Machine!")
-    btnEspresso = {'name':'Switch to Espresso', 'onClick': 'chgEspresso()', id: "btnEspresso", container:"CoffeeClicker"};
+    update("You can buy an Espresso Machine!")
+    btnEspresso = {'name':'Switch to Espresso', 'onClick': 'chgEspresso()', id: "btnEspresso", container:"Coffees"};
     btnBuyEspressoMachine = {'name':'Buy Espresso Machine', 'onClick': 'buyKit("espressoMachine","btnBuyEspressoMachine")', id: "btnBuyEspressoMachine", container:"Upgrades"};
     addButtonToContainer(btnEspresso)
     addButtonToContainer(btnBuyEspressoMachine)
