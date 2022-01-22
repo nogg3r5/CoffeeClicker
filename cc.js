@@ -374,27 +374,26 @@ updateCounter("Money",money,"£");
 
 function updateCounter(name,counted,units){
   if(units == undefined){units = ""};
-  counted = +counted.toFixed(2)
-  //if(counted == 0){return}
-var qname = !!document.querySelector("#"+name);
-var selName = document.querySelector("#"+name)
-if(qname == true){selName.innerHTML= name+": "+units+counted}else{
-const container = document.getElementById('counters');
+  countedType = typeof counted
+  var qname = !!document.querySelector("#"+name);
+  var selName = document.querySelector("#"+name);
+  if(countedType == "number"){counted = +counted.toFixed(2)}
+  if(qname == true){selName.innerHTML= name+": "+units+counted}else{
+  const container = document.getElementById('counters');
   const word = document.createElement('p');
   container.appendChild(word);
   var pID = document.createAttribute("id");
   pID.value = name;
   word.setAttributeNode(pID);
   var t = document.createTextNode(name+": "+units+counted);     // Create a text node
-  word.appendChild(t);
-}
+  word.appendChild(t);}
 }
 
 function getJob(){
   job = true;
   payriseCount = payriseCount + 1
-  if(income == 0){income = 1;updateMessages('Oooh, a job! You\'re a '+jobs[jobIndex].jobTitle+", "+jobs[jobIndex].description)}else{
-  income = income + (income/3);
+  if(income == 0){income = jobs[jobIndex].pay;updateMessages('Oooh, a job! You\'re a '+jobs[jobIndex].jobTitle+", "+jobs[jobIndex].description)}else{
+  income = income + ((income/100)*2);
   updateMessages('Payrise, time to  buy more coffee!')
   income = +income.toFixed(2)}
   const container = document.getElementById('btnJob');
@@ -402,14 +401,16 @@ function getJob(){
   container.innerText = "Payrise available!";
   jobTickCount = 100;
   btnPromo={'name':'Promotion Available!', 'onClick': 'getPromo()', id: "btnPromo", container:"CoffeeClicker"};
-  if(payriseCount % 10 === 0){addButtonToContainer(btnPromo)}
+  if(payriseCount % 5 === 0){addButtonToContainer(btnPromo)}
+  updateCounter("Job",jobs[jobIndex].jobTitle,"")
 }
 
 function getPromo(){
   document.getElementById('btnPromo').remove()
   jobIndex = jobIndex + 1
   updateMessages('Congratulations, now you\'re a '+jobs[jobIndex].jobTitle+", "+jobs[jobIndex].description)
-  income = income + (income/2)
+  income = jobs[jobIndex].pay
+  updateCounter("Job",jobs[jobIndex].jobTitle,"")
 }
 
 function jobTimer(){
@@ -430,7 +431,7 @@ function earnMoney(){
   updateCounter("Money",money,"£")
   tickCount = perTicks;
   moneyTotal = moneyTotal + income;
-  if(job == true){updateCounter("LifetimeEarnings",moneyTotal,"£");  updateCounter('Pay',income,"£")}
+  if(job == true){  updateCounter('Pay',income,"£");updateCounter("LifetimeEarnings",moneyTotal,"£");}
 }else{tickCount = tickCount -1;updateCounter("Money",money,"£")}
 }
 
@@ -490,7 +491,7 @@ function unlocks(){
   if(income>100){
     espressoUnlocked=true;
     if(checkForBtn("btnEspresso") == false){
-    update("You can buy an Espresso Machine!")
+    updateMessages("You can buy an Espresso Machine!")
     btnEspresso = {'name':'Switch to Espresso', 'onClick': 'chgEspresso()', id: "btnEspresso", container:"Coffees"};
     btnBuyEspressoMachine = {'name':'Buy Espresso Machine', 'onClick': 'buyKit("espressoMachine","btnBuyEspressoMachine")', id: "btnBuyEspressoMachine", container:"Upgrades"};
     addButtonToContainer(btnEspresso)
@@ -503,7 +504,7 @@ function decaffeinate(addCaffeine){
     if(addCaffeine > 0){caffeine = caffeine + addCaffeine}
     if(caffeine > 10500){die()}
   if(caffeine == 0){return}else{
-    caffeine = caffeine - 1;
+    caffeine = caffeine - 2;
     updateCounter("Caffeine",caffeine,"mg")
   }
 }
